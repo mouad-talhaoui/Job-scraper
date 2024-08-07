@@ -3,10 +3,14 @@ from tkinter import *
 from tkinter import ttk
 from bs4 import BeautifulSoup
 import pandas as pd
+from tkhtmlview import HTMLLabel
 
 
 def generatefile(m):
-    n =int(m)
+    if m.isnumeric():
+        n =int(m)
+    else:
+        n = 1
     # URL of the website to scrape
     url = "https://www.emploi-public.ma/fr/index.asp?p="
     concours = []
@@ -43,8 +47,10 @@ def searchAndGeneratefile(m):
     
 
 def filterData(word):
-    global value 
-    value = list(filter(lambda x: word in x[0], value))
+    global e1
+    global value
+    searchAndGeneratefile(e1.get())
+    value = list(filter(lambda x: word.lower() in x[0].lower(), value))
     print("Ffff")
     print(value)
     visaluserConcours(frm, value)
@@ -80,6 +86,7 @@ def visaluserConcours(frm, value):
             label = ttk.Label(frm, text=value[i][0])
             labels.append(label)
             label.grid(column=1, row=3+i)
+            
         for i in range(len(value)):
             button = ttk.Button(frm, text="voir details", command=lambda:moreDetails(value[i][1]))
             btns.append(button)
@@ -96,11 +103,16 @@ def moreDetails(link):
     soup = BeautifulSoup(response.content, 'html.parser')
     data = []
     title = soup.find_all("h1")
-    print(title)
     data.append(title[0].get_text())
-    openNewWindow(data)
+    tds = soup.find_all("td")
+    print("tds")
+    ths = soup.find_all("th")
+    print("ths")
+    print(ths)
+    openNewWindow(data,tds,ths)
+    
 
-def openNewWindow(data):
+def openNewWindow(data,tds,ths):
      
     # Toplevel object which will 
     # be treated as a new window
@@ -109,9 +121,20 @@ def openNewWindow(data):
  
     # sets the title of the
     # Toplevel widget
-    newWindow.title("Details | Mouad")
-    frm= ttk.Frame(newWindow, padding=10)
-    ttk.Label(frm, text=data[0]).pack()
+    newWindow.title(data[0]+" | Mouad")
+    l2 = Label(newWindow, text = data[0])
+    l2.pack()
+    htmlContent = ""
+    for i in range(0,len(tds)):
+        htmlContent = htmlContent  + "<tr>"+"<th style='color:blue;border: 1px solid;width: 100%;'>"+ths[i].get_text()+"</th><td style='border: 1px solid;width: 100%;'>"+tds[i].get_text()+"</td></tr>"
+
+        # Add label
+    htmlContent = "<table style='border: 1px solid;width: 100%;border-collapse: collapse;'><tbody>"+htmlContent+"</tbody><table>"
+    print(htmlContent)
+    my_label = HTMLLabel(newWindow, html=htmlContent)
+        
+    # Adjust label
+    my_label.pack()
  
     
 root.mainloop()
