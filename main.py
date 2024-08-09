@@ -171,10 +171,10 @@ def openNewWindow(data,tds,ths):
     l2.pack()
     htmlContent = ""
     for i in range(0,len(tds)):
-        htmlContent = htmlContent  + "<tr>"+"<th style='color:blue;border: 1px solid;width: 100%;'>"+ths[i].get_text()+"</th><td style='border: 1px solid;width: 100%;'>"+tds[i].get_text()+"</td></tr>"
+        htmlContent = htmlContent  + "<tr>"+"<th style='color:green;'>"+ths[i].get_text()+"</th><td style='color:red;'>"+tds[i].get_text()+"</td></tr>"
 
         # Add label
-    htmlContent = "<table style='border: 1px solid;width: 100%;border-collapse: collapse;'><tbody>"+htmlContent+"</tbody><table>"
+    htmlContent = "<table><tbody>"+htmlContent+"</tbody><table>"
     print(htmlContent)
     my_label = HTMLLabel(second_frame, html=htmlContent)
         
