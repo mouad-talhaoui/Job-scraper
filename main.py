@@ -139,11 +139,35 @@ def openNewWindow(data,tds,ths):
     # be treated as a new window
     global root
     newWindow = Toplevel(root)
+
+    #Create a main frame
+    main_frame = Frame(newWindow)
+    main_frame.pack(fill=BOTH, expand=1)
+    #create a canvas
+    my_canvas = Canvas(main_frame)
+    my_canvas.pack(side=LEFT, fill=BOTH, expand=1)
+
+    # add a scrollbar to the canvas
+    my_scrollbary = ttk.Scrollbar(main_frame,orient=VERTICAL, command=my_canvas.yview)
+
+    my_scrollbarx = ttk.Scrollbar(main_frame,orient=HORIZONTAL, command=my_canvas.xview)
+    my_scrollbarx.pack(side=BOTTOM,fill=X)
+    my_scrollbary.pack(side=RIGHT,fill=Y)
+    #configure the canvas
+    my_canvas.configure(xscrollcommand=my_scrollbarx.set, yscrollcommand=my_scrollbary.set)
+    my_canvas.bind('<Configure>',lambda e:my_canvas.configure(scrollregion=my_canvas.bbox("all")))
+
+    #create anthoer frame inside the canvas
+    second_frame = Frame(my_canvas)
+
+
+    #add that new frame to a window in the canvas
+    my_canvas.create_window((0,0),window=second_frame,anchor="nw")
  
     # sets the title of the
     # Toplevel widget
     newWindow.title(data[0]+" | Mouad")
-    l2 = Label(newWindow, text = data[0])
+    l2 = Label(second_frame, text = data[0])
     l2.pack()
     htmlContent = ""
     for i in range(0,len(tds)):
@@ -152,7 +176,7 @@ def openNewWindow(data,tds,ths):
         # Add label
     htmlContent = "<table style='border: 1px solid;width: 100%;border-collapse: collapse;'><tbody>"+htmlContent+"</tbody><table>"
     print(htmlContent)
-    my_label = HTMLLabel(newWindow, html=htmlContent)
+    my_label = HTMLLabel(second_frame, html=htmlContent)
         
     # Adjust label
     my_label.pack()
